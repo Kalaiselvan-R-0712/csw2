@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Stackly – Cloud Services</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+body{background:#fff;color:#222;line-height:1.65;overflow-x:hidden}
+
+/* ================= HEADER ================= */
+header{
+  position:absolute;
+  top:0;width:100%;
+  padding:22px 8%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:100;
+}
+.logo img{height:42px}
+
+nav{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+nav a,nav button{
+  font-size:14px;color:#222;font-weight:500;
+  background:none;border:none;cursor:pointer;text-decoration:none
+}
+
+/* DROPDOWN */
+.dropdown{position:relative}
+.dropdown-menu{
+  position:absolute;
+  top:120%;left:0;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 12px 30px rgba(0,0,0,.15);
+  min-width:140px;
+  display:none;
+  flex-direction:column;
+}
+.dropdown-menu a{padding:10px 14px;font-size:13px}
+.dropdown-menu a:hover{background:#FDBA2D}
+
+.btn{padding:8px 18px;border-radius:20px;border:1px solid #000;font-size:13px}
+.btn.dark{background:#000;color:#fff;border:none}
+
+/* HAMBURGER */
+.hamburger{
+  display:none;
+  font-size:28px;
+  cursor:pointer;
+}
+
+/* ================= HERO ================= */
+.hero{
+  background:#FDBA2D;
+  min-height:100vh;
+  padding:140px 8% 80px;
+  position:relative;
+}
+.hero-inner{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:center;
+}
+
+.hero-text h1{
+  font-size:46px;
+  line-height:1.2;
+  margin-bottom:15px;
+  animation:fadeIn 1s ease forwards, headShake 1.6s ease-in-out 2s infinite;
+}
+.hero-text p{
+  font-size:15px;
+  max-width:420px;
+  margin-bottom:25px;
+  animation:fadeIn 1.3s ease forwards, headShake 1.6s ease-in-out 3s infinite;
+}
+.hero-text .cta{
+  padding:12px 26px;
+  background:#000;color:#fff;
+  border-radius:25px;
+  font-size:14px;
+  animation:heartbeat 2.5s infinite;
+}
+
+/* HERO IMAGE */
+.hero-image{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.hero-image img{
+  width:100%;
+  max-width:480px;
+  height:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.3));
+  animation:zoomIn 1.2s ease forwards, slowZoom 12s ease-in-out infinite;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  bottom:-1px;left:0;
+  width:100%;height:120px;
+  background:#fff;
+  border-top-left-radius:100%;
+  border-top-right-radius:100%;
+}
+
+/* ================= MOVING ZIG ZAG ================= */
+.moving-section{
+  overflow:hidden;
+  white-space:nowrap;
+  padding:80px 8%;
+}
+.moving-content{
+  display:inline-block;
+  animation-duration:30s;
+  animation-timing-function:linear;
+  animation-iteration-count:infinite;
+}
+.moving-left .moving-content{animation-name:moveLeft}
+.moving-right .moving-content{animation-name:moveRight}
+
+.moving-content .inner{
+  display:flex;
+  align-items:center;
+  gap:40px;
+}
+.moving-content img{
+  width:300px;
+  max-width:100%;
+  border-radius:18px;
+  animation:zoomIn .9s;
+}
+.moving-content h3{
+  font-size:28px;
+  margin-bottom:8px;
+  animation:tada 1.8s;
+}
+.moving-content p{font-size:15px;color:#444}
+
+/* ================= STATIC ================= */
+.section-static{
+  padding:90px 8%;
+  text-align:center;
+}
+.section-static h2{font-size:34px;animation:tada 2s}
+.section-static p{
+  max-width:800px;
+  margin:auto;
+  color:#555;
+  animation:fadeIn 1s;
+}
+
+/* ================= FOOTER ================= */
+.stackly-footer{background:#fff;padding:70px 8% 30px}
+.footer-inner{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:40px;
+}
+.footer-logo{height:38px;margin-bottom:15px}
+.footer-col h4{margin-bottom:15px;font-size:15px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:10px}
+.footer-col a{text-decoration:none;color:#222;font-size:14px}
+.footer-col a:hover{color:#FDBA2D}
+.stackly-footer p{font-size:14px;color:#444}
+.social-icons{display:flex;gap:14px;margin-top:10px}
+.social-icons svg{width:22px;height:22px;fill:#222;transition:.3s}
+.social-icons a:hover svg{fill:#FDBA2D}
+.footer-bottom{
+  margin-top:40px;
+  text-align:center;
+  font-size:13px;
+  color:#666;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes heartbeat{0%{transform:scale(1)}20%{transform:scale(1.08)}40%{transform:scale(1)}}
+@keyframes tada{
+  0%{transform:scale(1)}
+  10%,20%{transform:scale(.9) rotate(-3deg)}
+  30%,50%,70%,90%{transform:scale(1.1) rotate(3deg)}
+  40%,60%,80%{transform:scale(1.1) rotate(-3deg)}
+  100%{transform:scale(1)}
+}
+@keyframes slowZoom{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes headShake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-4px)}
+  50%{transform:translateX(4px)}
+  75%{transform:translateX(-2px)}
+  100%{transform:translateX(0)}
+}
+@keyframes moveLeft{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+@keyframes moveRight{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* ================= MOBILE FIX ================= */
+@media(max-width:900px){
+
+  header{
+    position:relative;
+    padding:16px 6%;
+  }
+
+  .hamburger{display:block}
+
+  nav{
+    position:absolute;
+    top:100%;
+    left:0;
+    width:100%;
+    background:#fff;
+    flex-direction:column;
+    gap:14px;
+    padding:20px 0;
+    display:none;
+    text-align:center;
+  }
+  nav.show{display:flex}
+
+  /* CENTER ALL MOBILE NAV ITEMS (INCLUDING HOME) */
+  nav a,nav button{
+    width:100%;
+    text-align:center;
+  }
+
+  .dropdown{width:100%}
+
+  .dropdown-menu{
+    position:static;
+    width:100%;
+    box-shadow:none;
+    border-radius:0;
+    align-items:center;
+  }
+
+  .dropdown-menu a{
+    width:100%;
+    text-align:center;
+  }
+
+  /* HERO MOBILE VISIBILITY FIX */
+  .hero{
+    padding:130px 6% 70px;
+    min-height:auto;
+  }
+  .hero::after{height:70px}
+
+  .hero-inner{
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+
+  .hero-text h1{font-size:30px}
+  .hero-text p{
+    font-size:14px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .hero-image{
+    min-height:260px;
+    margin-top:30px;
+  }
+  .hero-image img{max-width:100%}
+
+  .moving-section{
+    white-space:normal;
+    padding:60px 6%;
+  }
+
+  .moving-content{
+    animation-duration:20s;
+  }
+
+  .moving-content .inner{
+    flex-direction:column;
+    text-align:center;
+  }
+
+  .footer-inner{
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+
+  .social-icons{justify-content:center}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <img src="assets/images/logo/stackly_logo.webp" alt="Stackly">
+  </a>
+
+  <div class="hamburger" id="hamburger">☰</div>
+
+  <nav id="mobileNav">
+    <div class="dropdown">
+      <button id="homeBtn">Home ▾</button>
+      <div class="dropdown-menu" id="homeMenu">
+        <a href="homepage2.html">Home 2</a>
+      </div>
+    </div>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="packages.html">Packages</a>
+    <a href="contact.html">Contact</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="login.html" class="btn">Login</a>
+    <a href="register.html" class="btn dark">Register</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1>START MANAGING YOUR<br>CLOUD BETTER</h1>
+      <p>Audit cost savings, security and automation across your cloud infrastructure.</p>
+      <a href="register.html" class="cta">Sign Up For Free Trial</a>
+    </div>
+    <div class="hero-image">
+      <img src="assets/images/hero/cloud-hero.webp" alt="Cloud Services">
+    </div>
+  </div>
+</section>
+
+<!-- MOVING SECTIONS -->
+<section class="moving-section moving-left">
+  <div class="moving-content">
+    <div class="inner">
+      <img src="https://plus.unsplash.com/premium_vector-1754558470496-e12b71cd8900" alt="">
+      <div>
+        <h3>Enterprise Cloud Governance</h3>
+        <p>Maintain control with policy-based automation and real-time insights.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moving-section moving-right">
+  <div class="moving-content">
+    <div class="inner">
+      <img src="https://plus.unsplash.com/premium_vector-1762997049791-ea7ae1c9452a" alt="">
+      <div>
+        <h3>Comprehensive Cloud Services</h3>
+        <p>Cost optimization, security hardening and seamless migration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moving-section moving-left">
+  <div class="moving-content">
+    <div class="inner">
+      <img src="https://plus.unsplash.com/premium_vector-1682269365294-fb65f0d76df3" alt="">
+      <div>
+        <h3>Automation & DevOps Excellence</h3>
+        <p>Automated CI/CD pipelines and governance workflows.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moving-section moving-right">
+  <div class="moving-content">
+    <div class="inner">
+      <img src="https://plus.unsplash.com/premium_vector-1763098259133-5865936b7bcd" alt="">
+      <div>
+        <h3>Security & Compliance</h3>
+        <p>Enterprise-grade controls aligned to global standards.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-static">
+  <h2>Trusted by Global Teams</h2>
+  <p>Stackly is trusted by fast-growing startups and global enterprises worldwide.</p>
+</section>
+
+<!-- FOOTER -->
+<footer class="stackly-footer">
+  <div class="footer-inner">
+
+    <div class="footer-col">
+      <img src="assets/images/logo/stackly_logo.webp" class="footer-logo">
+      <p>
+        Stackly is a next-generation cloud services platform helping
+        businesses optimize, secure and scale cloud infrastructure.
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="packages.html">Packages</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <p>Chennai, Tamil Nadu, India</p>
+      <p>+91 98765 43210</p>
+      <p>hello@stackly.com</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Follow Us</h4>
+      <div class="social-icons">
+        <a href="404.html"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
+        <a href="404.html"><svg viewBox="0 0 24 24"><path d="M4.98 3.5C4.98 4.88 3.84 6 2.5 6S0 4.88 0 3.5 1.14 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8h4v14h-4zM7.5 8h3.8v1.9h.1c.5-.9 1.7-2 3.6-2 3.9 0 4.6 2.5 4.6 5.8V22h-4v-6.3c0-1.5 0-3.4-2.1-3.4-2.1 0-2.4 1.6-2.4 3.3V22h-4z"/></svg></a>
+        <a href="404.html"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1 4.48 4.48 0 0 0 1.94-2.48 9.12 9.12 0 0 1-2.89 1.1A4.51 4.51 0 0 0 11 6a12.8 12.8 0 0 1-9.29-4.71 4.51 4.51 0 0 0 1.4 6.02A4.41 4.41 0 0 1 .96 6v.06A4.51 4.51 0 0 0 4.47 10a4.52 4.52 0 0 1-2.04.08 4.51 4.51 0 0 0 4.21 3.12A9 9 0 0 1 0 19.54 12.8 12.8 0 0 0 7 21c8.3 0 12.8-6.87 12.8-12.8 0-.2 0-.42-.02-.63A9.2 9.2 0 0 0 23 3z"/></svg></a>
+        <a href="404.html"><svg viewBox="0 0 24 24"><path d="M22.67 0H1.33C.6 0 0 .6 0 1.33v21.34C0 23.4.6 24 1.33 24h11.49v-9.29H9.69v-3.62h3.13V8.41c0-3.1 1.9-4.79 4.66-4.79 1.33 0 2.47.1 2.8.14v3.24l-1.92.001c-1.5 0-1.8.71-1.8 1.76v2.31h3.59l-.47 3.62h-3.12V24h6.12c.73 0 1.33-.6 1.33-1.33V1.33C24 .6 23.4 0 22.67 0z"/></svg></a>
+        <a href="404.html"><svg viewBox="0 0 24 24"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 3a1 1 0 110 2 1 1 0 010-2zm-5 1a5 5 0 110 10 5 5 0 010-10z"/></svg></a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2025 Stackly. All rights reserved.
+  </div>
+</footer>
+
+<script>
+const homeBtn=document.getElementById("homeBtn");
+const homeMenu=document.getElementById("homeMenu");
+homeBtn.onclick=e=>{
+  e.stopPropagation();
+  homeMenu.style.display=homeMenu.style.display==="flex"?"none":"flex";
+};
+document.onclick=()=>homeMenu.style.display="none";
+
+const hamburger=document.getElementById("hamburger");
+const nav=document.getElementById("mobileNav");
+hamburger.onclick=()=>nav.classList.toggle("show");
+</script>
+
+</body>
+</html>

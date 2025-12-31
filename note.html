@@ -16,9 +16,10 @@
 
 body{
   font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:#f5f6fa;
+  background:#0b1020;
   color:#222;
   overflow-x:hidden;
+  scroll-behavior:smooth;
 }
 
 img{
@@ -27,17 +28,33 @@ img{
   display:block;
 }
 
-/* ================= HEADER ================= */
-header{
-  position:absolute;
-  top:0;left:0;
-  width:100%;
-  padding:22px 8%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:100;
+/* ================= GLOBAL EFFECTS ================= */
+.section-fade{
+  opacity:0;
+  transform:translateY(40px);
+  animation:sectionIn 1s forwards;
 }
+
+/* ================= HEADER ================= */
+/* ================= FIXED HEADER ================= */
+header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 22px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 9999;
+  background: transparent;     /* stays transparent initially */
+  transition: background 0.3s ease;
+}
+
+header.scrolled{
+  background: black;
+}
+
 .logo img{height:42px}
 
 nav{
@@ -79,10 +96,19 @@ nav a,nav button{
   border:1px solid #fff;
   font-size:13px;
   color:#fff;
+  transition:.25s;
+}
+.btn:hover{
+  background:#fff;
+  color:#245df5;
 }
 .btn.dark{
   background:#000;
   border:none;
+}
+.btn.dark:hover{
+  background:#111;
+  color:#fff;
 }
 
 .hamburger{
@@ -90,33 +116,67 @@ nav a,nav button{
   font-size:28px;
   cursor:pointer;
   color:#fff;
+  transition:.2s;
+}
+.hamburger:hover{
+  transform:scale(1.05);
 }
 
 /* ================= HERO ================= */
 .hero{
   position:relative;
-  background:#245df5;
   color:#fff;
-  padding:190px 8% 100px;
+  padding:190px 8% 120px;
   overflow:hidden;
   min-height:100vh;
 }
 
-.hero::before,
+/* glow gradient moving background */
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:conic-gradient(from 120deg,#00c853,#245df5,#9c27ff,#00c853);
+  opacity:0.28;
+  filter:blur(80px);
+  animation:spinBg 40s linear infinite;
+  z-index:0;
+}
+
+/* ================= HERO VIDEO ================= */
+.hero-video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:0;
+}
+
+.hero-video-overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(5,7,19,0.65); /* dark overlay */
+  z-index:1;
+}
+
+/* KEEP CONTENT ABOVE VIDEO */
+.hero-content,
+.hero-floating-dot{
+  position:relative;
+  z-index:2;
+}
+
+/* soft blobs */
 .hero::after{
   content:"";
   position:absolute;
-  border-radius:50%;
-  background:rgba(255,255,255,.06);
-  animation:float 16s ease-in-out infinite;
-}
-.hero::before{
-  width:420px;height:420px;
-  top:-120px;right:-120px;
-}
-.hero::after{
   width:520px;height:520px;
-  bottom:-180px;left:-180px;
+  border-radius:50%;
+  background:radial-gradient(circle,#ffffff33 0,#ffffff00 70%);
+  top:-120px;right:-140px;
+  animation:float 16s ease-in-out infinite;
+  z-index:0;
 }
 
 .hero-content{
@@ -132,15 +192,15 @@ nav a,nav button{
 .hero-tag{
   text-transform:uppercase;
   font-size:12px;
-  letter-spacing:.14em;
+  letter-spacing:.24em;
   color:#c9d6ff;
   animation:fadeUp .8s forwards;
 }
 .hero h1{
-  font-size:44px;
+  font-size:46px;
   line-height:1.2;
   margin:14px 0 18px;
-  animation:fadeUp 1s .2s forwards;
+  animation:fadeUp 1s .15s forwards;
 }
 .hero p{
   font-size:15px;
@@ -148,50 +208,82 @@ nav a,nav button{
   color:#e4e9ff;
   margin-bottom:28px;
   max-width:520px;
-  animation:fadeUp 1s .4s forwards;
+  animation:fadeUp 1s .3s forwards;
 }
 .hero .cta{
   display:inline-block;
-  padding:14px 36px;
-  background:#00c853;
-  color:#fff;
+  padding:14px 38px;
+  background:linear-gradient(135deg,#00c853,#4effa7);
+  color:#041019;
   border-radius:30px;
   font-weight:600;
   text-decoration:none;
-  animation:fadeUp 1s .6s forwards, pulse 3s infinite 2s;
+  box-shadow:0 0 0 0 rgba(0,200,83,.6);
+  animation:fadeUp 1s .45s forwards, glowPulse 2.4s ease-out infinite 1.2s;
+  position:relative;
+}
+.hero .cta::after{
+  content:"→";
+  margin-left:10px;
+  transition:.25s;
+}
+.hero .cta:hover::after{
+  transform:translateX(4px);
 }
 
 /* HERO IMAGE */
 .hero-illustration{
   display:flex;
   justify-content:center;
-  animation:zoomFade 1.4s forwards, floatSlow 10s infinite ease-in-out;
+  animation:zoomFade 1.4s forwards, floatSlow 12s infinite ease-in-out;
 }
 .hero-illustration img{
   max-width:520px;
-  filter:drop-shadow(0 20px 40px rgba(0,0,0,.35));
+  filter:drop-shadow(0 22px 40px rgba(0,0,0,.5));
 }
 
-/* LOGOS */
+/* floating small dots */
+.hero-floating-dot{
+  position:absolute;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#00ffc3;
+  box-shadow:0 0 14px #00ffc3;
+  opacity:.8;
+  animation:dotDrift 14s linear infinite;
+}
+.hero-floating-dot.dot1{top:28%;left:12%;}
+.hero-floating-dot.dot2{top:65%;left:42%;animation-delay:-4s;}
+.hero-floating-dot.dot3{top:18%;right:20%;animation-delay:-8s;}
+
+/* LOGOS - FIXED TO WHITE */
 .hero-logos{
   margin-top:50px;
   display:flex;
   gap:50px;
-  opacity:.45;
-  filter:grayscale(1);
-  animation:fadeUp 1s .8s forwards;
+  opacity:1; /* Full opacity */
+  filter:brightness(0) invert(1); /* Makes logos WHITE */
+  animation:fadeUp 1s .6s forwards;
 }
 .hero-logos img{height:28px}
 
 /* ================= SERVICES ================= */
 .services{
-  background:#fff;
+  background:#050713;
   padding:100px 8% 120px;
   text-align:center;
+  color:#fff;
 }
 .services h2{
-  font-size:28px;
-  margin-bottom:40px;
+  font-size:30px;
+  margin-bottom:18px;
+}
+.services > p{
+  max-width:520px;
+  margin:0 auto 44px;
+  color:#adb3d9;
+  font-size:15px;
 }
 .services-grid{
   display:grid;
@@ -199,31 +291,55 @@ nav a,nav button{
   gap:28px;
 }
 .service-card{
-  background:#f8f9ff;
+  background:linear-gradient(145deg,#191e3a,#070a17);
   padding:28px 24px;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.06);
+  border-radius:18px;
+  box-shadow:0 20px 40px rgba(0,0,0,.5);
   text-align:left;
-  animation:fadeUp 1s forwards;
-  transition:.4s;
+  position:relative;
+  overflow:hidden;
+  transform:translateY(40px);
+  opacity:0;
+  animation:cardIn .8s forwards;
+}
+.service-card:nth-child(2){animation-delay:.12s;}
+.service-card:nth-child(3){animation-delay:.24s;}
+.service-card::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:radial-gradient(circle at 0 0,#00c85333,transparent 60%);
+  opacity:0;
+  transition:.35s;
+}
+.service-card:hover::before{
+  opacity:1;
 }
 .service-card:hover{
-  transform:translateY(-14px) scale(1.03);
+  transform:translateY(-10px) scale(1.02);
 }
 .service-icon{
-  width:46px;height:46px;
-  border-radius:50%;
-  background:#00c853;
+  width:50px;height:50px;
+  border-radius:16px;
+  background:#00c8531a;
   display:flex;
   align-items:center;
   justify-content:center;
   margin-bottom:16px;
 }
 .service-icon img{width:26px}
+.service-card h3{
+  font-size:18px;
+  margin-bottom:8px;
+}
+.service-card p{
+  font-size:14px;
+  color:#cfd4ff;
+}
 
 /* ================= STATS ================= */
 .stats{
-  background:linear-gradient(135deg, #245df5 0%, #00c853 100%);
+  background:radial-gradient(circle at 10% 10%,#00c853 0,#245df5 40%,#050713 100%);
   color:#fff;
   padding:80px 8%;
   text-align:center;
@@ -234,26 +350,46 @@ nav a,nav button{
   gap:40px;
   margin-top:40px;
 }
+.stat-item{
+  position:relative;
+}
 .stat-item h3{
-  font-size:48px;
+  font-size:42px;
   font-weight:700;
-  margin-bottom:8px;
-  animation:counter 2s ease-out forwards;
+  margin-bottom:6px;
+  animation:counter 1.6s ease-out forwards;
 }
 .stat-item p{
-  font-size:16px;
+  font-size:15px;
   opacity:0.9;
+}
+.stat-item::after{
+  content:"";
+  position:absolute;
+  bottom:-10px;
+  left:50%;
+  width:26px;
+  height:3px;
+  border-radius:999px;
+  background:#00ffc3;
+  transform:translateX(-50%);
 }
 
 /* ================= TESTIMONIALS ================= */
 .testimonials{
-  background:#fff;
+  background:#050713;
   padding:100px 8%;
   text-align:center;
+  color:#fff;
 }
 .testimonials h2{
   font-size:28px;
-  margin-bottom:60px;
+  margin-bottom:18px;
+}
+.testimonials > p{
+  max-width:520px;
+  margin:0 auto 44px;
+  color:#a6aed6;
 }
 .testimonials-grid{
   display:grid;
@@ -261,29 +397,31 @@ nav a,nav button{
   gap:40px;
 }
 .testimonial-card{
-  background:#f8f9ff;
+  background:radial-gradient(circle at top,#1e2445,#080a17);
   padding:40px 30px;
-  border-radius:20px;
-  box-shadow:0 15px 40px rgba(0,0,0,.08);
+  border-radius:24px;
+  box-shadow:0 18px 40px rgba(0,0,0,.7);
   animation:slideInUp 1s ease forwards;
   position:relative;
   overflow:hidden;
 }
+.testimonial-card:nth-child(2){animation-delay:.15s;}
+.testimonial-card:nth-child(3){animation-delay:.3s;}
 .testimonial-card::before{
   content:'"';
   position:absolute;
-  top:20px;
-  left:20px;
+  top:16px;
+  left:22px;
   font-size:80px;
   color:#00c853;
-  opacity:0.3;
+  opacity:0.28;
   font-family:serif;
 }
 .testimonial-card p{
-  font-size:16px;
-  line-height:1.6;
+  font-size:15px;
+  line-height:1.7;
   margin-bottom:20px;
-  color:#555;
+  color:#d4dbff;
 }
 .testimonial-author{
   display:flex;
@@ -305,15 +443,26 @@ nav a,nav button{
 }
 .testimonial-author span{
   font-size:14px;
-  color:#888;
+  color:#8e95c9;
 }
 
 /* ================= CTA ================= */
 .cta-section{
-  background:#245df5;
+  background:radial-gradient(circle at top,#245df5,#02040c);
   color:#fff;
   padding:80px 8%;
   text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.cta-section::before{
+  content:"";
+  position:absolute;
+  width:260px;height:260px;
+  border-radius:50%;
+  background:#00ffc31a;
+  top:-60px;right:10%;
+  filter:blur(4px);
 }
 .cta-section h2{
   font-size:32px;
@@ -326,24 +475,27 @@ nav a,nav button{
   max-width:600px;
   margin-left:auto;
   margin-right:auto;
+  color:#d5defb;
 }
 .cta-section .btn{
   display:inline-block;
-  padding:16px 40px;
-  background:#00c853;
-  color:#fff;
+  padding:16px 42px;
+  background:linear-gradient(135deg,#00c853,#4effa7);
+  color:#041019;
   border-radius:30px;
   font-weight:600;
   text-decoration:none;
   font-size:16px;
-  animation:pulse 2s infinite;
-  border: none;
+  border:none;
+  box-shadow:0 14px 32px rgba(0,0,0,.55);
+  animation:pulse 2.4s infinite;
 }
 
 /* ================= FOOTER ================= */
 .stackly-footer{
-  background:#fff;
+  background:#020309;
   padding:70px 8% 30px;
+  color:#c5cae9;
 }
 .footer-inner{
   display:grid;
@@ -351,20 +503,20 @@ nav a,nav button{
   gap:40px;
 }
 .footer-logo{height:38px;margin-bottom:15px}
-.footer-col h4{margin-bottom:15px;font-size:15px}
+.footer-col h4{margin-bottom:15px;font-size:15px;color:#fff}
 .footer-col ul{list-style:none}
 .footer-col ul li{margin-bottom:10px}
-.footer-col a{text-decoration:none;color:#222;font-size:14px}
+.footer-col a{text-decoration:none;color:#c5cae9;font-size:14px}
 .footer-col a:hover{color:#FDBA2D}
-.stackly-footer p{font-size:14px;color:#444}
+.stackly-footer p{font-size:14px;color:#9ea3c7}
 .social-icons{display:flex;gap:14px;margin-top:10px}
-.social-icons svg{width:22px;height:22px;fill:#222;transition:.3s}
-.social-icons a:hover svg{fill:#FDBA2D}
+.social-icons svg{width:22px;height:22px;filter:invert(80%);transition:.3s}
+.social-icons a:hover svg{filter:invert(60%) sepia(100%) saturate(2000%) hue-rotate(40deg);}
 .footer-bottom{
   margin-top:40px;
   text-align:center;
   font-size:13px;
-  color:#666;
+  color:#777da8;
 }
 
 /* ================= MOBILE FIXES ================= */
@@ -373,13 +525,13 @@ nav a,nav button{
   header{
     position:relative;
     padding:14px 6%;
-    background:#fff;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
+    background:#050713;
+    box-shadow:0 2px 10px rgba(0,0,0,.35);
   }
 
   .hamburger{
     display:block;
-    color:#222;
+    color:#fff;
     font-size:26px;
   }
 
@@ -388,17 +540,32 @@ nav a,nav button{
     top:100%;
     left:0;
     width:100%;
-    background:#245df5;
+    background:#101530;
     flex-direction:column;
-    padding:24px 0;
+    padding:24px 0 18px;
     display:none;
     text-align:center;
   }
   nav.show{display:flex}
 
-  /* HERO SAFE */
+  nav a,nav button{
+    color:#fff;
+    padding:8px 0;
+  }
+
+  .dropdown-menu{
+    position:static;
+    width:100%;
+    box-shadow:none;
+    border-radius:0;
+    background:#050713;
+  }
+  .dropdown-menu a{
+    color:#fff;
+  }
+
   .hero{
-    padding:120px 6% 70px;
+    padding:120px 6% 80px;
     min-height:auto;
   }
 
@@ -419,12 +586,19 @@ nav a,nav button{
     width:100%;
   }
 
-  .hero h1{font-size:32px}
+  .hero h1{font-size:34px}
 
   .hero-logos{
     justify-content:center;
     flex-wrap:wrap;
     gap:24px;
+  }
+
+  .services,
+  .testimonials,
+  .stats,
+  .cta-section{
+    padding-inline:6%;
   }
 
   .stats-grid,
@@ -454,6 +628,11 @@ nav a,nav button{
   30%{transform:scale(1.08)}
   60%{transform:scale(1)}
 }
+@keyframes glowPulse{
+  0%{box-shadow:0 0 0 0 rgba(0,200,83,.6)}
+  70%{box-shadow:0 0 0 22px rgba(0,200,83,0)}
+  100%{box-shadow:0 0 0 0 rgba(0,200,83,0)}
+}
 @keyframes float{
   0%,100%{transform:translateY(0)}
   50%{transform:translateY(-30px)}
@@ -462,8 +641,11 @@ nav a,nav button{
   0%,100%{transform:translateY(0)}
   50%{transform:translateY(-20px)}
 }
+@keyframes spinBg{
+  to{transform:rotate(360deg)}
+}
 @keyframes counter{
-  from{opacity:0;transform:scale(0.5)}
+  from{opacity:0;transform:scale(0.7)}
   to{opacity:1;transform:scale(1)}
 }
 @keyframes slideInUp{
@@ -472,6 +654,19 @@ nav a,nav button{
 }
 @keyframes fadeInUp{
   from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes dotDrift{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(20px,-10px)}
+  50%{transform:translate(40px,4px)}
+  75%{transform:translate(20px,18px)}
+  100%{transform:translate(0,0)}
+}
+@keyframes sectionIn{
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes cardIn{
   to{opacity:1;transform:translateY(0)}
 }
 </style>
@@ -504,50 +699,70 @@ nav a,nav button{
 
 <!-- HERO -->
 <section class="hero">
+
+  <!-- HERO VIDEO BACKGROUND -->
+<video class="hero-video" autoplay muted loop playsinline>
+  <source src="Cloud1.mp4" type="video/mp4">
+</video>
+
+<!-- VIDEO OVERLAY -->
+<div class="hero-video-overlay"></div>
+
+  <span class="hero-floating-dot dot1"></span>
+  <span class="hero-floating-dot dot2"></span>
+  <span class="hero-floating-dot dot3"></span>
+
   <div class="hero-content">
     <div>
       <span class="hero-tag">Cloud Platform</span>
       <h1>Cloud<br>Management<br>Services</h1>
-      <p>Secure, scalable and cost-optimized cloud solutions built for modern businesses.</p>
+      <p>Secure, scalable and cost‑optimized cloud solutions built for modern businesses.</p>
       <a href="services2.html" class="cta">Get in Touch</a>
 
       <div class="hero-logos">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a8/Microsoft_Azure_Logo.svg">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" alt="AWS">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a8/Microsoft_Azure_Logo.svg" alt="Azure">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg" alt="GCP">
       </div>
     </div>
 
     <div class="hero-illustration">
-      <img src="https://plus.unsplash.com/premium_vector-1683141305195-6cdfd5214b49?q=80&w=2340&auto=format&fit=crop">
+      <img src="https://plus.unsplash.com/premium_vector-1683141305195-6cdfd5214b49?q=80&w=1200&auto=format&fit=crop" alt="Cloud illustration">
     </div>
   </div>
 </section>
 
 <!-- SERVICES -->
-<section class="services">
+<section class="services section-fade">
   <h2>Cloud Services</h2>
+  <p>Design, run and optimize your workloads across multiple clouds with a single unified platform.</p>
   <div class="services-grid">
     <div class="service-card">
-      <div class="service-icon"><img src="https://cdn-icons-png.flaticon.com/512/4149/4149677.png"></div>
+      <div class="service-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/4149/4149647.png" alt="Database">
+      </div>
       <h3>Cloud Databases</h3>
       <p>Highly available, secure and scalable managed databases.</p>
     </div>
     <div class="service-card">
-      <div class="service-icon"><img src="https://cdn-icons-png.flaticon.com/512/4149/4149680.png"></div>
+      <div class="service-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/4149/4149680.png" alt="Hosting">
+      </div>
       <h3>Website Hosting</h3>
-      <p>Fast, global hosting with built-in security.</p>
+      <p>Fast, global hosting with built‑in security and CDN acceleration.</p>
     </div>
     <div class="service-card">
-      <div class="service-icon"><img src="https://cdn-icons-png.flaticon.com/512/4149/4149652.png"></div>
+      <div class="service-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/4149/4149652.png" alt="Storage">
+      </div>
       <h3>File Storage</h3>
-      <p>Durable object storage for backups and assets.</p>
+      <p>Durable object storage for backups, media and application assets.</p>
     </div>
   </div>
 </section>
 
 <!-- STATS -->
-<section class="stats">
+<section class="stats section-fade">
   <h2 style="font-size:36px; margin-bottom:20px;">Why Choose Stackly?</h2>
   <p style="max-width:600px; margin:0 auto 40px; opacity:0.9;">Join thousands of businesses transforming their cloud operations with our innovative platform.</p>
   <div class="stats-grid">
@@ -561,7 +776,7 @@ nav a,nav button{
     </div>
     <div class="stat-item">
       <h3>24/7</h3>
-      <p>Support</p>
+      <p>Expert Support</p>
     </div>
     <div class="stat-item">
       <h3>100M+</h3>
@@ -571,33 +786,34 @@ nav a,nav button{
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="testimonials">
+<section class="testimonials section-fade">
   <h2>What Our Clients Say</h2>
+  <p>Real teams, real workloads and real results with Stackly cloud management.</p>
   <div class="testimonials-grid">
-    <div class="testimonial-card" style="animation-delay:0.2s;">
-      <p>Stackly revolutionized our cloud management. Cost savings and security improvements beyond expectations!</p>
+    <div class="testimonial-card">
+      <p>Stackly revolutionized our cloud management. Cost savings and security beyond expectations.</p>
       <div class="testimonial-author">
-        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="John Doe">
+        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop" alt="John Doe">
         <div>
           <h4>John Doe</h4>
           <span>CEO, TechCorp</span>
         </div>
       </div>
     </div>
-    <div class="testimonial-card" style="animation-delay:0.4s;">
-      <p>Seamless migration and top-notch support. Our team loves the intuitive dashboard and automation features.</p>
+    <div class="testimonial-card">
+      <p>Seamless migration and top‑notch support. Our team loves the intuitive dashboard and automation.</p>
       <div class="testimonial-author">
-        <img src="https://images.unsplash.com/photo-1655249493799-9cee4fe983bb?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Anna Smith">
+        <img src="https://images.unsplash.com/photo-1655249493799-9cee4fe983bb?q=80&w=400&auto=format&fit=crop" alt="Anna Smith">
         <div>
           <h4>Anna Smith</h4>
           <span>CTO, Innovate Inc.</span>
         </div>
       </div>
     </div>
-    <div class="testimonial-card" style="animation-delay:0.6s;">
-      <p>From startups to enterprises, Stackly scales with us. Highly recommend for anyone in cloud space.</p>
+    <div class="testimonial-card">
+      <p>From startups to enterprises, Stackly scales with us. Highly recommend for anyone in the cloud space.</p>
       <div class="testimonial-author">
-        <img src="https://images.unsplash.com/photo-1573496358961-3c82861ab8f4?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Maria Brown">
+        <img src="https://images.unsplash.com/photo-1573496358961-3c82861ab8f4?q=80&w=400&auto=format&fit=crop" alt="Maria Brown">
         <div>
           <h4>Maria Brown</h4>
           <span>DevOps Lead, ScaleUp</span>
@@ -608,9 +824,9 @@ nav a,nav button{
 </section>
 
 <!-- CTA -->
-<section class="cta-section">
+<section class="cta-section section-fade">
   <h2>Ready to Transform Your Cloud?</h2>
-  <p>Start your free trial today and experience the future of cloud management.</p>
+  <p>Start your free trial today and experience the future of cloud management with Stackly.</p>
   <a href="register.html" class="btn">Start Free Trial</a>
 </section>
 
@@ -618,8 +834,8 @@ nav a,nav button{
 <footer class="stackly-footer">
   <div class="footer-inner">
     <div class="footer-col">
-      <img src="assets/images/logo/stackly_logo.webp" class="footer-logo">
-      <p>Stackly is a next-generation cloud services platform helping businesses optimize, secure and scale cloud infrastructure.</p>
+      <img src="assets/images/logo/stackly_logo.webp" class="footer-logo" alt="Stackly logo">
+      <p>Stackly is a next‑generation cloud services platform helping businesses optimize, secure and scale cloud infrastructure.</p>
     </div>
     <div class="footer-col">
       <h4>Quick Links</h4>
@@ -663,6 +879,18 @@ homeBtn.onclick=e=>{
   homeMenu.style.display=homeMenu.style.display==="flex"?"none":"flex";
 };
 document.onclick=()=>homeMenu.style.display="none";
+</script>
+
+<script>
+const header = document.querySelector("header");
+
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 50) {
+    header.classList.add("scrolled");
+  } else {
+    header.classList.remove("scrolled");
+  }
+});
 </script>
 
 </body>
